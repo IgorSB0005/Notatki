@@ -23,3 +23,16 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+import os
+def list_files(directory):
+    if not os.path.exists(directory):
+        print(f"Directory '{directory}' does not exist.")
+        return
+
+    files = os.listdir(directory)
+
+    print("Your notes:")
+    for file in files:
+        print(file)
+
