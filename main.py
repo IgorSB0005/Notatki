@@ -1,3 +1,15 @@
+import os
+
+def create_notes_directory(directory):
+    try:
+        if not os.path.exists(directory):
+            os.makedirs(directory)
+            print("Directory successfully created:", directory)
+        else:
+            print("Directory already exists:", directory)
+    except Exception as e:
+        print("Error during directory creation:", e)
+
 def add_note():
     note_name = input("Name of your note: ")
     note_content = input("Write down your thoughts: ")
@@ -11,6 +23,17 @@ def add_note():
     except Exception as e:
         print(f"An error occurred while recording the note: {e}")
 
+def list_files(directory):
+    if not os.path.exists(directory):
+        print(f"Directory '{directory}' does not exist.")
+        return
+
+    files = os.listdir(directory)
+
+    print("Your notes:")
+    for file in files:
+        print(file)
+
 def main():
     while True:
       add_note()
@@ -23,16 +46,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-import os
-def list_files(directory):
-    if not os.path.exists(directory):
-        print(f"Directory '{directory}' does not exist.")
-        return
-
-    files = os.listdir(directory)
-
-    print("Your notes:")
-    for file in files:
-        print(file)
-
