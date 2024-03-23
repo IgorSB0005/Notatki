@@ -1,19 +1,17 @@
 import os
 
-def create_notes_directory(directory):
+notes_directory = "Notes"
+def create_notes_directory():
     try:
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-            print("Directory successfully created:", directory)
-        else:
-            print("Directory already exists:", directory)
+        if not os.path.exists(notes_directory):
+            os.makedirs(notes_directory)
     except Exception as e:
         print("Error during directory creation:", e)
 
 def add_note():
     note_name = input("Name of your note: ")
     note_content = input("Write down your thoughts: ")
-    file_name = f"{note_name}.txt"
+    file_name = os.path.join(notes_directory, note_name)
 
     try:
         with open (file_name, "w") as file:
@@ -23,26 +21,34 @@ def add_note():
     except Exception as e:
         print(f"An error occurred while recording the note: {e}")
 
-def list_files(directory):
-    if not os.path.exists(directory):
-        print(f"Directory '{directory}' does not exist.")
+def list_files():
+    if not os.path.exists(notes_directory):
+        print(f"Directory '{notes_directory}' does not exist.")
         return
 
-    files = os.listdir(directory)
+    files = os.listdir(notes_directory)
 
     print("Your notes:")
     for file in files:
         print(file)
 
 def main():
+    create_notes_directory()
+    print("Welcome to the super duper program")
     while True:
-      add_note()
-      new_note = input("Would you like to add one more note? (yes/no) ")
-      while new_note.lower() != "yes" and new_note.lower() != "no":
-        print(f"Cannot understand your answer.")
-        new_note = input("Would you like to add one more note? (yes/no) ")
-      if new_note.lower() == "no":
-        print("menu***") #тут коли зробим меню його додамо, ми ж його зробим?
+        print("1: Add note\n"
+              "2: View notes\n"
+              "3: Quit the program"
+              "")
+        action = str(input("choose an action:"))
+        os.system("cls")
+        match action:
+            case '1':
+                add_note()
+            case '2':
+                list_files()
+            case '3':
+                break
 
 if __name__ == "__main__":
     main()
