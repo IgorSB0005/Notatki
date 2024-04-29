@@ -1,54 +1,111 @@
+import customtkinter
 import os
 
 notes_directory = "Notes"
-def create_notes_directory():
-    try:
+listNotes = []
+
+class ScrollableCheckboxFrame(customtkinter.CTkScrollableFrame):
+    def __init__(self, master, title, values):
+        super().__init__(master, label_text=title)
+        self.grid_columnconfigure(0, weight=1)
+        self.values = values
+        self.checkboxes = []
+        for i, value in enumerate(self.values):
+            checkbox = customtkinter.CTkCheckBox(self, text=value)
+            checkbox.grid(row=i, column=0, padx=10, pady=(10, 0), sticky="w")
+            self.checkboxes.append(checkbox)
+
+    def get(self):
+        checked_checkboxes = []
+        for checkbox in self.checkboxes:
+            if checkbox.get() == 1:
+                checked_checkboxes.append(checkbox.cget("text"))
+        return checked_checkboxes
+
+class CreatingAndFillingNote(customtkinter.CTkToplevel):
+    def __init__(self):
+        super().__init__()
+
+        self.title("Note creation")
+        self.geometry("400x100")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        self.resizable(width=False, height=False)
+
+        self.nameNote = customtkinter.StringVar()
+        self.contentNote = customtkinter.StringVar()
+
+        entry_name = customtkinter.CTkEntry(self, textvariable=self.nameNote)
+        entry_content = customtkinter.CTkEntry(self, textvariable=self.contentNote)
+        buttonCreation = customtkinter.CTkButton(self, text="creation", command=self.destroy)
+
+        customtkinter.CTkLabel(self, text="Name of your note:").grid(row=0, column=0,padx=10, pady=(10, 0), sticky="w")
+        customtkinter.CTkLabel(self, text="Write down your thoughts:").grid(row=1, column=0,padx=10, pady=(10, 0), sticky="w")
+        entry_name.grid(row=0, column=1, padx=20, pady=(5, 0), sticky="w")
+        entry_content.grid(row=1, column=1, padx=20, pady=(5, 0), sticky="w", columnspan=5)
+        buttonCreation.grid(row=3, columnspan=2)
+    def open(self):
+        self.wait_window()
+        name = self.nameNote.get()
+        content = self.contentNote.get()
+        return name,content
+
+class App(customtkinter.CTk):
+    def __init__(self):
+        super().__init__()
+
+        self.ReadListNotes()
+        self.title("Notes app")
+        self.geometry("600x440")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+
+        self.scrollable_checkbox_frame = ScrollableCheckboxFrame(self, title="Notes", values=listNotes)
+        self.scrollable_checkbox_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsew")
+        self.create_notes_directory()
+        self.buttonAdd = customtkinter.CTkButton(self, text="Add", command=self.add_note)
+        self.buttonAdd.grid(row=3, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
+        self.buttonDelete = customtkinter.CTkButton(self, text="A button that doesn't work yet)", command=self.add_note)
+        self.buttonDelete.grid(row=4, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
+
+    def create_notes_directory(self):
+        try:
+            if not os.path.exists(notes_directory):
+                os.makedirs(notes_directory)
+        except Exception as e:
+            print("Error during directory creation:", e)
+
+    def add_note(self):
+        note = CreatingAndFillingNote().open()
+        note_name = note[0]
+        note_content = note[1]
+        file_name = os.path.join(notes_directory, note_name)
+
+        try:
+            with open(file_name, "w") as file:
+                file.write(note_content)
+                print("Your note is recorded successfully.")
+        # 04_ Obsługa błędów, wyjątki
+        except Exception as e:
+            print(f"An error occurred while recording the note: {e}")
+        listNotes.append(note_name)
+        self.refresh_list_notes()
+
+    def ReadListNotes(self):
         if not os.path.exists(notes_directory):
-            os.makedirs(notes_directory)
-    except Exception as e:
-        print("Error during directory creation:", e)
+            print(f"Directory '{notes_directory}' does not exist.")
+            return
 
-def add_note():
-    note_name = input("Name of your note: ")
-    note_content = input("Write down your thoughts: ")
-    file_name = os.path.join(notes_directory, note_name)
+        files = os.listdir(notes_directory)
 
-    try:
-        with open (file_name, "w") as file:
-            file.write(note_content)
-            print("Your note is recorded successfully.")
-    #04_ Obsługa błędów, wyjątki
-    except Exception as e:
-        print(f"An error occurred while recording the note: {e}")
+        for file in files:
+            listNotes.append(file)
 
-def list_files():
-    if not os.path.exists(notes_directory):
-        print(f"Directory '{notes_directory}' does not exist.")
-        return
+    def refresh_list_notes(self):
+        self.scrollable_checkbox_frame.destroy()
+        self.scrollable_checkbox_frame = ScrollableCheckboxFrame(self, title="Notes", values=listNotes)
+        self.scrollable_checkbox_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsew")
 
-    files = os.listdir(notes_directory)
-
-    print("Your notes:")
-    for file in files:
-        print(file)
-
-def main():
-    create_notes_directory()
-    print("Welcome to the super duper program")
-    while True:
-        print("1: Add note\n"
-              "2: View notes\n"
-              "3: Quit the program"
-              "")
-        action = str(input("choose an action:"))
-        os.system("cls")
-        match action:
-            case '1':
-                add_note()
-            case '2':
-                list_files()
-            case '3':
-                break
 
 if __name__ == "__main__":
-    main()
+    App().mainloop()
