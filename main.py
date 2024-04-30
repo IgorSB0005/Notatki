@@ -44,6 +44,7 @@ class CreatingAndFillingNote(customtkinter.CTkToplevel):
         entry_name.grid(row=0, column=1, padx=20, pady=(5, 0), sticky="w")
         entry_content.grid(row=1, column=1, padx=20, pady=(5, 0), sticky="w", columnspan=5)
         buttonCreation.grid(row=3, columnspan=2)
+
     def open(self):
         self.wait_window()
         name = self.nameNote.get()
