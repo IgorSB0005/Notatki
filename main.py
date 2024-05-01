@@ -66,7 +66,7 @@ class App(customtkinter.CTk):
         self.create_notes_directory()
         self.buttonAdd = customtkinter.CTkButton(self, text="Add", command=self.add_note)
         self.buttonAdd.grid(row=3, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
-        self.buttonDelete = customtkinter.CTkButton(self, text="A button that doesn't work yet)", command=self.add_note)
+        self.buttonDelete = customtkinter.CTkButton(self, text="Delete", command=self.delete_notes)
         self.buttonDelete.grid(row=4, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
 
     def create_notes_directory(self):
@@ -106,6 +106,19 @@ class App(customtkinter.CTk):
         self.scrollable_checkbox_frame.destroy()
         self.scrollable_checkbox_frame = ScrollableCheckboxFrame(self, title="Notes", values=listNotes)
         self.scrollable_checkbox_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsew")
+
+    def delete_notes(self):
+        checked_notes = self.scrollable_checkbox_frame.get()
+        for note in checked_notes:
+            file_name = os.path.join(notes_directory,note)
+            try:
+                os.remove(file_name)
+                listNotes.remove(note)
+            except Exception as e:
+                print(f"Deleting error")
+        self.refresh_list_notes()
+
+
 
 
 if __name__ == "__main__":
