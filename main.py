@@ -1,6 +1,7 @@
 import customtkinter
 import os
 
+
 notes_directory = "Notes"
 listNotes = []
 
@@ -21,6 +22,7 @@ class ScrollableCheckboxFrame(customtkinter.CTkScrollableFrame):
             if checkbox.get() == 1:
                 checked_checkboxes.append(checkbox.cget("text"))
         return checked_checkboxes
+
 
 class CreatingAndFillingNote(customtkinter.CTkToplevel):
     def __init__(self):
@@ -66,8 +68,11 @@ class App(customtkinter.CTk):
         self.create_notes_directory()
         self.buttonAdd = customtkinter.CTkButton(self, text="Add", command=self.add_note)
         self.buttonAdd.grid(row=3, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
+        self.buttonRead = customtkinter.CTkButton(self, text="Read(choose one)", command=self.read_notes)
+        self.buttonRead.grid(row=4, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
         self.buttonDelete = customtkinter.CTkButton(self, text="Delete", command=self.delete_notes)
-        self.buttonDelete.grid(row=4, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
+        self.buttonDelete.grid(row=5, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
+
 
     def create_notes_directory(self):
         try:
@@ -80,17 +85,18 @@ class App(customtkinter.CTk):
         note = CreatingAndFillingNote().open()
         note_name = note[0]
         note_content = note[1]
-        file_name = os.path.join(notes_directory, note_name)
+        if note_name != "" and note_content != "":
+            file_name = os.path.join(notes_directory, note_name)
 
-        try:
-            with open(file_name, "w") as file:
-                file.write(note_content)
-                print("Your note is recorded successfully.")
-        # 04_ Obsługa błędów, wyjątki
-        except Exception as e:
-            print(f"An error occurred while recording the note: {e}")
-        listNotes.append(note_name)
-        self.refresh_list_notes()
+            try:
+                with open(file_name, "w") as file:
+                    file.write(note_content)
+                    print("Your note is recorded successfully.")
+            # 04_ Obsługa błędów, wyjątki
+            except Exception as e:
+                print(f"An error occurred while recording the note: {e}")
+            listNotes.append(note_name)
+            self.refresh_list_notes()
 
     def ReadListNotes(self):
         if not os.path.exists(notes_directory):
@@ -118,8 +124,27 @@ class App(customtkinter.CTk):
                 print(f"Deleting error")
         self.refresh_list_notes()
 
+    def read_notes(self):
+        checked_notes = self.scrollable_checkbox_frame.get()
+        if len(checked_notes) == 1:
+            read_window= customtkinter.CTkToplevel()
+            read_window.title("Read Notes")
+            read_window.geometry("1050x650")
+            read_window.grid_columnconfigure(0, weight=1)
+            read_window.grid_rowconfigure(0, weight=1)
+            read_window.text_area = customtkinter.CTkTextbox(read_window)
+            read_window.text_area.grid(row=0, column=0, sticky="nsew", columnspan=1)
 
+            read_window.text_area.configure(height= 600, width= 1000)
+            for note_file in checked_notes:
+                note_path = os.path.join(notes_directory, note_file)
+                with open(note_path, "r") as file:
+                    note_content = file.read()
+                    read_window.text_area.insert("0.0", f"Note: {note_content}\n")
+                    read_window.text_area.insert("0.0", f"{note_file}\n")
 
+            buttonCreation = customtkinter.CTkButton(read_window, text="Cancel", command=read_window.destroy)
+            buttonCreation.grid(row=1, columnspan=2)
 
 if __name__ == "__main__":
     App().mainloop()
