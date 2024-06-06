@@ -2,7 +2,7 @@ import customtkinter
 import os
 
 
-notes_directory = "Notes"
+notes_directory = os.path.expanduser("~/Documents/Notes")
 listNotes = []
 
 class ScrollableCheckboxFrame(customtkinter.CTkScrollableFrame):
@@ -56,8 +56,6 @@ class CreatingAndFillingNote(customtkinter.CTkToplevel):
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-
-        self.ReadListNotes()
         self.title("Notes app")
         self.geometry("600x440")
         self.grid_columnconfigure(0, weight=1)
@@ -65,7 +63,6 @@ class App(customtkinter.CTk):
 
         self.scrollable_checkbox_frame = ScrollableCheckboxFrame(self, title="Notes", values=listNotes)
         self.scrollable_checkbox_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsew")
-        self.create_notes_directory()
         self.buttonAdd = customtkinter.CTkButton(self, text="Add", command=self.add_note)
         self.buttonAdd.grid(row=3, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
         self.buttonRead = customtkinter.CTkButton(self, text="Read(choose one)", command=self.read_notes)
@@ -73,11 +70,14 @@ class App(customtkinter.CTk):
         self.buttonDelete = customtkinter.CTkButton(self, text="Delete", command=self.delete_notes)
         self.buttonDelete.grid(row=5, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
 
+    def initialize_notes(self):
+        self.create_notes_directory()
+        self.ReadListNotes()
+        self.refresh_list_notes()
 
     def create_notes_directory(self):
         try:
-            if not os.path.exists(notes_directory):
-                os.makedirs(notes_directory)
+            os.makedirs(notes_directory, exist_ok=True)
         except Exception as e:
             print("Error during directory creation:", e)
 
@@ -127,7 +127,7 @@ class App(customtkinter.CTk):
     def read_notes(self):
         checked_notes = self.scrollable_checkbox_frame.get()
         if len(checked_notes) == 1:
-            read_window= customtkinter.CTkToplevel()
+            read_window = customtkinter.CTkToplevel()
             read_window.title("Read Notes")
             read_window.geometry("1050x650")
             read_window.grid_columnconfigure(0, weight=1)
@@ -147,4 +147,6 @@ class App(customtkinter.CTk):
             buttonCreation.grid(row=1, columnspan=2)
 
 if __name__ == "__main__":
-    App().mainloop()
+    app = App()
+    app.initialize_notes()
+    app.mainloop()
