@@ -118,6 +118,22 @@ class App(customtkinter.CTk):
                 print(f"Deleting error")
         self.refresh_list_notes()
 
+def search_note(self):
+    search_query = self.entrySearch.get()
+    matched_notes = []
+
+    if search_query:
+        for note in listNotes:
+            file_path = os.path.join(notes_directory, note)
+            try:
+                with open(file_path, 'r') as file:
+                    content = file.read()
+                     if re.search(search_query, content, re.IGNORECASE):
+                        matched_notes.append(note)
+            except Exception as e:
+                print(f"An error occurred while searching: {e}")
+
+
 
 
 
