@@ -124,24 +124,21 @@ class App(customtkinter.CTk):
                 print(f"Deleting error")
         self.refresh_list_notes()
 
-<<<<<<< HEAD
-def search_note(self):
-    search_query = self.entrySearch.get()
-    matched_notes = []
+    def search_note(self):
+        search_query = self.entrySearch.get()
+        matched_notes = []
 
-    if search_query:
-        for note in listNotes:
-            file_path = os.path.join(notes_directory, note)
-            try:
-                with open(file_path, 'r') as file:
-                    content = file.read()
-                     if re.search(search_query, content, re.IGNORECASE):
-                        matched_notes.append(note)
-            except Exception as e:
-                print(f"An error occurred while searching: {e}")
+        if search_query:
+            for note in listNotes:
+                file_path = os.path.join(notes_directory, note)
+                try:
+                    with open(file_path, 'r') as file:
+                        content = file.read()
+                        if re.search(search_query, content, re.IGNORECASE):
+                            matched_notes.append(note)
+                except Exception as e:
+                    print(f"An error occurred while searching: {e}")
 
-
-=======
     def read_notes(self):
         checked_notes = self.scrollable_checkbox_frame.get()
         if len(checked_notes) == 1:
@@ -152,8 +149,6 @@ def search_note(self):
             read_window.grid_rowconfigure(0, weight=1)
             read_window.text_area = customtkinter.CTkTextbox(read_window)
             read_window.text_area.grid(row=0, column=0, sticky="nsew", columnspan=1)
->>>>>>> 7995e38153ba6348d5c3122958d5aac1e4f5e7cc
-
             read_window.text_area.configure(height= 600, width= 1000)
             for note_file in checked_notes:
                 note_path = os.path.join(notes_directory, note_file)
@@ -162,14 +157,11 @@ def search_note(self):
                     read_window.text_area.insert("0.0", f"Note: {note_content}\n")
                     read_window.text_area.insert("0.0", f"{note_file}\n")
 
-            buttonCreation = customtkinter.CTkButton(read_window, text="Cancel", command=read_window.destroy)
-            buttonCreation.grid(row=1, columnspan=2)
+        buttonCreation = customtkinter.CTkButton(read_window, text="Cancel", command=read_window.destroy)
+        buttonCreation.grid(row=1, columnspan=2)
 
 if __name__ == "__main__":
-<<<<<<< HEAD
-    App().mainloop()
-=======
     app = App()
     app.initialize_notes()
     app.mainloop()
->>>>>>> 7995e38153ba6348d5c3122958d5aac1e4f5e7cc
+    
