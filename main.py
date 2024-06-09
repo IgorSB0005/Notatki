@@ -61,19 +61,21 @@ class App(customtkinter.CTk):
         self.title("Notes app")
         self.geometry("600x440")
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+        self.grid_rowconfigure(1, weight=1)
 
         self.scrollable_checkbox_frame = ScrollableCheckboxFrame(self, title="Notes", values=listNotes)
-        self.scrollable_checkbox_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsew")
+        self.scrollable_checkbox_frame.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsew")
         self.buttonAdd = customtkinter.CTkButton(self, text="Add", command=self.add_note)
-        self.buttonAdd.grid(row=3, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
+        self.buttonAdd.grid(row=4, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
         self.buttonRead = customtkinter.CTkButton(self, text="Read(choose one)", command=self.read_notes)
-        self.buttonRead.grid(row=4, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
-        self.buttonDelete = customtkinter.CTkButton(self, text="Delete", command=self.delete_notes)
-        self.buttonDelete.grid(row=5, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
+        self.buttonRead.grid(row=5, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
         self.buttonSearch = customtkinter.CTkButton(self, text="Search", command=self.search_window)
         self.buttonSearch.grid(row=6, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
-
+        self.buttonDelete = customtkinter.CTkButton(self, text="Delete", command=self.delete_notes)
+        self.buttonDelete.grid(row=7, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
+        self.buttonRefresh = customtkinter.CTkButton(self, text='⟳', command=self.refresh_list_notes)
+        self.buttonRefresh.configure(width=20, height=20)
+        self.buttonRefresh.grid(column=2, row=1, sticky="ne", pady=10)
 
 
     def search_window(self):
@@ -83,7 +85,6 @@ class App(customtkinter.CTk):
         searchWindow.grid_columnconfigure(0, weight=1)
         searchWindow.grid_rowconfigure(1, weight=1)
         searchWindow.resizable(width=False, height=False)
-
 
         self.entrySearch = customtkinter.StringVar()
 
@@ -95,9 +96,6 @@ class App(customtkinter.CTk):
         entry_search.grid(row=1, column=0, padx=20, pady=(5, 0), sticky="w", columnspan=2)
         buttonSearch.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
         buttonCancel.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
-
-
-
 
     def initialize_notes(self):
         self.create_notes_directory()
@@ -140,7 +138,7 @@ class App(customtkinter.CTk):
     def refresh_list_notes(self):
         self.scrollable_checkbox_frame.destroy()
         self.scrollable_checkbox_frame = ScrollableCheckboxFrame(self, title="Notes", values=listNotes)
-        self.scrollable_checkbox_frame.grid(row=0, column=0, padx=10, pady=(10, 0), sticky="nsew")
+        self.scrollable_checkbox_frame.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsew", columnspan=2)
 
     def delete_notes(self):
         checked_notes = self.scrollable_checkbox_frame.get()
@@ -167,6 +165,9 @@ class App(customtkinter.CTk):
                             matched_notes.append(note)
                 except Exception as e:
                     print(f"An error occurred while searching: {e}")
+        self.scrollable_checkbox_frame.destroy()
+        self.scrollable_checkbox_frame = ScrollableCheckboxFrame(self, title="Notes", values=matched_notes)
+        self.scrollable_checkbox_frame.grid(row=1, column=0, padx=10, pady=(10, 0), sticky="nsew", columnspan=2)
 
     def read_notes(self):
         checked_notes = self.scrollable_checkbox_frame.get()
