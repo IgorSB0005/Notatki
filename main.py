@@ -47,6 +47,7 @@ class CreatingAndFillingNote(customtkinter.CTkToplevel):
         entry_content.grid(row=1, column=1, padx=20, pady=(5, 0), sticky="w", columnspan=5)
         buttonCreation.grid(row=3, columnspan=2)
 
+
     def open(self):
         self.wait_window()
         name = self.nameNote.get()
@@ -69,6 +70,33 @@ class App(customtkinter.CTk):
         self.buttonRead.grid(row=4, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
         self.buttonDelete = customtkinter.CTkButton(self, text="Delete", command=self.delete_notes)
         self.buttonDelete.grid(row=5, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
+        self.buttonSearch = customtkinter.CTkButton(self, text="Search", command=self.search_window)
+        self.buttonSearch.grid(row=6, column=0, padx=10, pady=10, sticky="ew", columnspan=2)
+
+
+
+    def search_window(self):
+        searchWindow = customtkinter.CTkToplevel()
+        searchWindow.title("Search notes")
+        searchWindow.geometry("400x200")
+        searchWindow.grid_columnconfigure(0, weight=1)
+        searchWindow.grid_rowconfigure(1, weight=1)
+        searchWindow.resizable(width=False, height=False)
+
+
+        self.entrySearch = customtkinter.StringVar()
+
+        entry_search = customtkinter.CTkEntry(searchWindow, textvariable=self.entrySearch)
+        buttonSearch = customtkinter.CTkButton(searchWindow, text="Search", command=self.search_note)
+        buttonCancel = customtkinter.CTkButton(searchWindow, text="Cancel", command=searchWindow.destroy)
+
+        customtkinter.CTkLabel(searchWindow, text="Enter your request:").grid(row=0, column=0, padx=20, pady=(5, 0), sticky="w", columnspan=2)
+        entry_search.grid(row=1, column=0, padx=20, pady=(5, 0), sticky="w", columnspan=2)
+        buttonSearch.grid(row=2, column=0, padx=10, pady=10, sticky="ew")
+        buttonCancel.grid(row=2, column=1, padx=10, pady=10, sticky="ew")
+
+
+
 
     def initialize_notes(self):
         self.create_notes_directory()
