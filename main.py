@@ -1,6 +1,6 @@
 import customtkinter
 import os
-import re 
+import re
 
 
 notes_directory = os.path.expanduser("~/Documents/Notes")
